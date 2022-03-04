@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const process = require('process');
+const res = require('express/lib/response');
 const user = require('./routes/user');
 const card = require('./routes/card');
 
@@ -20,6 +22,10 @@ app.use((req, res, next) => {
 
 app.use('/', user);
 app.use('/', card);
+
+process.on('uncaughtException', (err, origin) => {
+  res.status(404).send(`${origin} ${err.name} c текстом ${err.message} не была обработана. Обратите внимание!`);
+});
 
 const { PORT = 3000 } = process.env;
 app.listen(PORT, () => {

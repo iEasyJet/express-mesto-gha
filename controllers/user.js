@@ -24,11 +24,14 @@ const postUser = (req, res) => {
 
 const findUser = (req, res) => {
   User.findById(req.params.userId)
+    .orFail(() => {
+      res.status(404).send({ message: 'Некорректное id пользователя' });
+    })
     .then((user) => {
       res.send({ user });
     })
     .catch(() => {
-      res.status(404).send({ message: 'Пользователь по указанному id не найден' });
+      res.status(400).send({ message: 'Пользователь по указанному id не найден' });
     });
 };
 
