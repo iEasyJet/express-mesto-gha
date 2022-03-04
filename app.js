@@ -23,8 +23,8 @@ app.use((req, res, next) => {
 app.use('/', user);
 app.use('/', card);
 
-process.on('uncaughtException', (err, origin) => {
-  res.status(404).send(`${origin} ${err.name} c текстом ${err.message} не была обработана. Обратите внимание!`);
+app.use((req, res) => {
+  res.status(404).send({ message: 'Страницы не существует' });
 });
 
 const { PORT = 3000 } = process.env;
