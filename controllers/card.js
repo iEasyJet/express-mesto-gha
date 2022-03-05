@@ -40,8 +40,12 @@ const deleteCard = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.message === 'NotFound') {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы неккоретные данные' });
+      } else if (err.message === 'NotFound') {
         res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+      } else {
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };

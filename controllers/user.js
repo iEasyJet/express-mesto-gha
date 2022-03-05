@@ -79,10 +79,8 @@ const updateAvatar = (req, res) => {
       res.send({ avatar: user.avatar });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара' });
-      } else if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Нет пользователя с переданным id' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
