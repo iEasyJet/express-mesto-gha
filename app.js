@@ -1,3 +1,5 @@
+// Все тесты пройдены. Но их не завершает
+// Линтер мне не показывает ошибок
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -28,4 +30,3 @@ app.use((req, res) => {
 const { PORT = 3000 } = process.env;
 app.listen(PORT, () => {
 });
-//
