@@ -59,10 +59,10 @@ const likeCard = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'NotFound') {
-        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
-      } else if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы неккоретные данные' });
+      } else if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
@@ -82,10 +82,10 @@ const removeLikeCard = (req, res) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'NotFound') {
-        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
-      } else if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы неккоретные данные' });
+      } else if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
