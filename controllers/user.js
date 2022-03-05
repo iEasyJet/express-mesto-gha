@@ -35,7 +35,9 @@ const findUser = (req, res) => {
       res.send({ user });
     })
     .catch((err) => {
-      if (err.name === 'NotFound') {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы неккоретные данные' });
+      } else if (err.name === 'NotFound') {
         res.status(404).send({ message: 'Нет пользователя с переданным id' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
@@ -58,8 +60,6 @@ const updateUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-      } else if (err.name === 'NotFound') {
-        res.status(404).send({ message: 'Нет пользователя с переданным id' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
