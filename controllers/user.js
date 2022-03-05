@@ -17,21 +17,29 @@ const postUser = (req, res) => {
     .then((user) => {
       res.send({ data: user });
     })
-    .catch(() => {
-      res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' });
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы неккоретные данные' });
+      } else {
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      }
     });
 };
 
 const findUser = (req, res) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      res.status(404).send({ message: 'Некорректное id пользователя' });
+      throw new Error('NotFound');
     })
     .then((user) => {
       res.send({ user });
     })
-    .catch(() => {
-      res.status(400).send({ message: 'Пользователь по указанному id не найден' });
+    .catch((err) => {
+      if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Нет пользователя с переданным id' });
+      } else {
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      }
     });
 };
 
@@ -47,8 +55,14 @@ const updateUser = (req, res) => {
     .then((user) => {
       res.send({ user });
     })
-    .catch(() => {
-      res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      } else if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Нет пользователя с переданным id' });
+      } else {
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      }
     });
 };
 
@@ -64,8 +78,14 @@ const updateAvatar = (req, res) => {
     .then((user) => {
       res.send({ avatar: user.avatar });
     })
-    .catch(() => {
-      res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара' });
+      } else if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Нет пользователя с переданным id' });
+      } else {
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      }
     });
 };
 

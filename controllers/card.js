@@ -22,21 +22,27 @@ const postCard = (req, res) => {
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(() => {
-      res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы неккоретные данные' });
+      } else {
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      }
     });
 };
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail(() => {
-      res.status(404).send({ message: 'Передан несуществующий _id карточки' });
+      throw new Error('NotFound');
     })
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(() => {
-      res.status(400).send({ message: 'Карточка с указанным _id не найдена' });
+    .catch((err) => {
+      if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+      }
     });
 };
 
@@ -47,13 +53,19 @@ const likeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      res.status(404).send({ message: 'Передан несуществующий _id карточки' });
+      throw new Error('NotFound');
     })
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(() => {
-      res.status(400).send({ message: 'Произошла ошибка' });
+    .catch((err) => {
+      if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+      } else if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы неккоретные данные' });
+      } else {
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      }
     });
 };
 
@@ -64,13 +76,19 @@ const removeLikeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      res.status(404).send({ message: 'Передан несуществующий _id карточки' });
+      throw new Error('NotFound');
     })
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(() => {
-      res.status(400).send({ message: 'Передан несуществующий _id карточки' });
+    .catch((err) => {
+      if (err.name === 'NotFound') {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+      } else if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы неккоретные данные' });
+      } else {
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      }
     });
 };
 
