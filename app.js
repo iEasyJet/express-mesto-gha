@@ -1,4 +1,3 @@
-// Все тесты пройдены. Но их не завершает
 // Линтер мне не показывает ошибок
 const express = require('express');
 const mongoose = require('mongoose');
