@@ -54,21 +54,9 @@ const postCardValidation = celebrate({
   }),
 });
 
-const deleteCardValidation = celebrate({
+const cardIdValidation = celebrate({
   [Segments.PARAMS]: Joi.object().keys({
-    cardId: Joi.string().required(),
-  }),
-});
-
-const likeCardValidation = celebrate({
-  [Segments.PARAMS]: Joi.object().keys({
-    cardId: Joi.string().required(),
-  }),
-});
-
-const removeLikeCardValidation = celebrate({
-  [Segments.PARAMS]: Joi.object().keys({
-    cardId: Joi.string().required(),
+    cardId: Joi.string().required().length(24).hex(),
   }),
 });
 
@@ -80,7 +68,5 @@ module.exports = {
   findUserValidation,
   getUserInfoByIdValidation,
   postCardValidation,
-  deleteCardValidation,
-  likeCardValidation,
-  removeLikeCardValidation,
+  cardIdValidation,
 };

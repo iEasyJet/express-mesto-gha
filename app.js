@@ -18,10 +18,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.post('/signin', loginValidation, login);
 app.post('/signup', postUserValidation, postUser);
 
-app.use(auth);
-
-app.use('/', user);
-app.use('/', card);
+app.use('/', auth, user);
+app.use('/', auth, card);
 
 app.use(errors());
 

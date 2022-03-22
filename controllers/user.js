@@ -2,15 +2,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { SALT_ROUNDS, CRYPTO_KEY } = require('../config/config');
 const User = require('../models/user');
-const ValidationError = require('../errors/ValidationError');
 const Unauthorized = require('../errors/Unauthorized');
+const ValidationError = require('../errors/ValidationError');
 const NotFoundError = require('../errors/NotFoundError');
 const CastError = require('../errors/CastError');
 
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.send({ data: users });
+      res.send({ users });
     })
     .catch((err) => {
       next(err);
@@ -36,17 +36,23 @@ const postUser = (req, res, next) => {
         password: hash,
       })
         .then((user) => {
-          res.send({ data: user });
+          res.send({
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+            _id: user._id,
+          });
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(new ValidationError('Переданы неккоретные данные'));
+          } else if (err.name === 'MongoServerError' && err.code === 11000) {
+            next(new CastError('Пользователь с такой почтой уже существует'));
+          } else {
+            next(err);
+          }
         });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new ValidationError('Переданы неккоретные данные'));
-      } else if (err.code === 11000) {
-        next(new CastError('Пользователь с такой почтой уже существует'));
-      } else {
-        next(err);
-      }
     });
 };
 
@@ -56,7 +62,7 @@ const findUser = (req, res, next) => {
       next(new NotFoundError('Нет пользователя с переданным id'));
     })
     .then((user) => {
-      res.send({ data: user });
+      res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -112,17 +118,25 @@ const updateAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password)
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Unauthorized('Неправильные почта или пароль'));
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Unauthorized('Неправильные почта или пароль'));
+          }
+          return user;
+        });
+    })
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, CRYPTO_KEY, { expiresIn: '7d' });
-      res.send(token);
+      res.send({ token });
     })
     .catch((err) => {
-      if (err.name === 'Unauthorized') {
-        next(new Unauthorized('Переданы неправильные почта или пароль'));
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
