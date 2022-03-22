@@ -1,0 +1,4 @@
+const SALT_ROUNDS = 10;
+const CRYPTO_KEY = '5908057c9d40c2a5dd2da52851b389d0c022fb8475462fb6daa7556991cb28ac';
+
+module.exports = { SALT_ROUNDS, CRYPTO_KEY };

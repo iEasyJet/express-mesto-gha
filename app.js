@@ -1,9 +1,12 @@
-// Линтер мне не показывает ошибок
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const user = require('./routes/user');
 const card = require('./routes/card');
+const { login, postUser } = require('./controllers/user');
+const auth = require('./middlewares/auth');
+const { postUserValidation, loginValidation } = require('./middlewares/validation');
 
 const app = express();
 
@@ -12,20 +15,30 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '621d236c0517a6fe1ab9e319',
-  };
-  next();
-});
+app.post('/signin', loginValidation, login);
+app.post('/signup', postUserValidation, postUser);
+
+app.use(auth);
 
 app.use('/', user);
 app.use('/', card);
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Страницы не существует' });
+app.use(errors());
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
 });
 
 const { PORT = 3000 } = process.env;
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
+  console.log(`App listening on port ${PORT}`);
 });
