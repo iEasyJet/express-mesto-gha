@@ -27,7 +27,7 @@ const postCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError({ message: 'Переданы неккоретные данные' }));
+        next(new ValidationError('Переданы неккоретные данные'));
       } else {
         next(err);
       }
@@ -37,18 +37,18 @@ const postCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      next(new NotFoundError({ message: 'Карточка с указанным _id не найдена' }));
+      next(new NotFoundError('Карточка с указанным _id не найдена'));
     })
     .then((card) => {
       if (req.user._id !== card.owner) {
-        next(new Forbidden({ message: 'Нет прав на удаление карточки' }));
+        next(new Forbidden('Нет прав на удаление карточки'));
       }
       card.remove();
       res.send({ data: 'Карточка удалена успешно!' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new CastError({ message: 'Переданы неккоретные данные' }));
+        next(new CastError('Переданы неккоретные данные'));
       } else {
         next(err);
       }
@@ -62,14 +62,14 @@ const likeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      next(new NotFoundError({ message: 'Карточка с указанным _id не найдена' }));
+      next(new NotFoundError('Карточка с указанным _id не найдена'));
     })
     .then((card) => {
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new CastError({ message: 'Переданы неккоретные данные' }));
+        next(new CastError('Переданы неккоретные данные'));
       } else {
         next(err);
       }
@@ -83,14 +83,14 @@ const removeLikeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      next(new NotFoundError({ message: 'Карточка с указанным _id не найдена' }));
+      next(new NotFoundError('Карточка с указанным _id не найдена'));
     })
     .then((card) => {
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new CastError({ message: 'Переданы неккоретные данные' }));
+        next(new CastError('Переданы неккоретные данные'));
       } else {
         next(err);
       }
