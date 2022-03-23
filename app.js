@@ -7,6 +7,7 @@ const card = require('./routes/card');
 const { login, postUser } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 const { postUserValidation, loginValidation } = require('./middlewares/validation');
+const NotFoundError = require('./errors/NotFoundError');
 
 const app = express();
 
@@ -20,6 +21,10 @@ app.post('/signup', postUserValidation, postUser);
 
 app.use('/', auth, user);
 app.use('/', auth, card);
+
+app.use((req, res, next) => {
+  next(new NotFoundError('Ресурс не найден'));
+});
 
 app.use(errors());
 

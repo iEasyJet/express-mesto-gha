@@ -41,7 +41,7 @@ const deleteCard = (req, res, next) => {
     })
     .then((card) => {
       if (String(req.user._id) === String(card.owner)) {
-        Card.findByIdAndRemove(req.params.id)
+        Card.findByIdAndRemove(card._id)
           .then(() => {
             res.send({ message: 'Карточка удалена успешно!' });
           });

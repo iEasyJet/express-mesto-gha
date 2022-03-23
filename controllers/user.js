@@ -6,6 +6,7 @@ const Unauthorized = require('../errors/Unauthorized');
 const ValidationError = require('../errors/ValidationError');
 const NotFoundError = require('../errors/NotFoundError');
 const CastError = require('../errors/CastError');
+const ConflictError = require('../errors/ConflictError');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -48,7 +49,7 @@ const postUser = (req, res, next) => {
           if (err.name === 'ValidationError') {
             next(new ValidationError('Переданы неккоретные данные'));
           } else if (err.name === 'MongoServerError' && err.code === 11000) {
-            next(new CastError('Пользователь с такой почтой уже существует'));
+            next(new ConflictError('Пользователь с такой почтой уже существует'));
           } else {
             next(err);
           }
