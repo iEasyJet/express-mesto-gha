@@ -8,6 +8,7 @@ const { login, postUser } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 const { postUserValidation, loginValidation } = require('./middlewares/validation');
 const NotFoundError = require('./errors/NotFoundError');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 
@@ -16,11 +17,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+app.use(requestLogger);
+
 app.post('/signin', loginValidation, login);
 app.post('/signup', postUserValidation, postUser);
 
 app.use('/', auth, user);
 app.use('/', auth, card);
+
+app.use(errorLogger);
 
 app.use((req, res, next) => {
   next(new NotFoundError('Ресурс не найден'));
